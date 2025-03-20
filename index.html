@@ -17,6 +17,9 @@
             <img id="player-image" src="" alt="Player Pokémon">
             <div class="stats">
                 <p>PV: <span id="player-hp"></span></p>
+                <div class="health-bar">
+                    <div id="player-health-bar" class="health-bar-fill"></div>
+                </div>
                 <p>PP: <span id="player-pp"></span></p>
             </div>
         </div>
@@ -24,6 +27,9 @@
             <img id="opponent-image" src="" alt="Opponent Pokémon">
             <div class="stats">
                 <p>PV: <span id="opponent-hp"></span></p>
+                <div class="health-bar">
+                    <div id="opponent-health-bar" class="health-bar-fill"></div>
+                </div>
                 <p>PP: <span id="opponent-pp"></span></p>
             </div>
         </div>
@@ -34,7 +40,11 @@
             <button>Attaque 4</button>
         </div>
         <div class="battle-log" id="log"></div>
+        <button id="switch-button">Changer de Pokémon</button>
         <button id="end-battle">Terminer le combat</button>
+    </div>
+    <div id="switch-menu" style="display: none;">
+        <h2>Choisissez un Pokémon</h2>
     </div>
     <script src="app.js"></script>
 </body>

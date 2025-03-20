@@ -1,3 +1,4 @@
+// Liste des Pokémon disponibles
 const pokemons = [
     {
         name: "Pikachu",
@@ -8,7 +9,7 @@ const pokemons = [
         specialDefense: 45,
         speed: 90,
         type: "Électrik",
-        image: "assets/pikachu.png",
+        image: "assets/pikachu.png", // Chemin d'accès correct
         attacks: [
             { name: "Éclair", power: 90, isSpecial: true, type: "Électrik", pp: 15 },
             { name: "Tacle", power: 40, isSpecial: false, type: "Normal", pp: 35 },
@@ -25,7 +26,7 @@ const pokemons = [
         specialDefense: 65,
         speed: 60,
         type: "Plante",
-        image: "assets/bulbasaur.png",
+        image: "assets/bulbasaur.png", // Chemin d'accès correct
         attacks: [
             { name: "Fouet Lianes", power: 45, isSpecial: false, type: "Plante", pp: 25 },
             { name: "Vampigraine", power: 0, isSpecial: true, type: "Plante", pp: 10 },
@@ -42,7 +43,7 @@ const pokemons = [
         specialDefense: 65,
         speed: 55,
         type: "Normal",
-        image: "assets/evoli.png",
+        image: "assets/evoli.png", // Chemin d'accès correct
         attacks: [
             { name: "Charge", power: 40, isSpecial: false, type: "Normal", pp: 35 },
             { name: "Mimi-Queue", power: 0, isSpecial: false, type: "Normal", pp: 30 },
@@ -59,7 +60,7 @@ const pokemons = [
         specialDefense: 50,
         speed: 65,
         type: "Feu",
-        image: "assets/salameche.png",
+        image: "assets/salameche.png", // Chemin d'accès correct
         attacks: [
             { name: "Flammèche", power: 40, isSpecial: true, type: "Feu", pp: 25 },
             { name: "Griffe", power: 40, isSpecial: false, type: "Normal", pp: 35 },
@@ -76,7 +77,7 @@ const pokemons = [
         specialDefense: 50,
         speed: 55,
         type: "Eau",
-        image: "assets/psyduck.png",
+        image: "assets/psyduck.png", // Chemin d'accès correct
         attacks: [
             { name: "Pistolet à O", power: 40, isSpecial: true, type: "Eau", pp: 25 },
             { name: "Choc Mental", power: 50, isSpecial: true, type: "Psy", pp: 25 },
@@ -86,16 +87,29 @@ const pokemons = [
     }
 ];
 
+let playerTeam = [
+    { ...pokemons[0] }, // Pikachu
+    { ...pokemons[1] }, // Bulbizarre
+    { ...pokemons[2] }  // Évoli
+];
+
+let opponentTeam = [
+    { ...pokemons[3] }, // Salamèche
+    { ...pokemons[4] }  // Psykokwak
+];
+
 let player;
 let opponent;
 
 const typeChart = {
-    "Feu": { "Eau": 0.5, "Plante": 2, "Feu": 0.5 },
-    "Eau": { "Feu": 2, "Plante": 0.5, "Eau": 0.5 },
-    "Plante": { "Feu": 0.5, "Eau": 2, "Plante": 0.5 },
-    "Électrik": { "Eau": 2, "Plante": 0.5, "Électrik": 0.5 },
-    "Normal": { "Combat": 0.5, "Normal": 1 },
-    "Psy": { "Combat": 0.5, "Psy": 1 }
+    "Feu": { "Eau": 0.5, "Plante": 2, "Feu": 0.5, "Glace": 2, "Insecte": 2, "Roche": 0.5, "Dragon": 0.5 },
+    "Eau": { "Feu": 2, "Plante": 0.5, "Eau": 0.5, "Sol": 2, "Roche": 2, "Dragon": 0.5 },
+    "Plante": { "Feu": 0.5, "Eau": 2, "Plante": 0.5, "Vol": 0.5, "Poison": 0.5, "Insecte": 0.5, "Sol": 2, "Roche": 2, "Dragon": 0.5 },
+    "Électrik": { "Eau": 2, "Plante": 0.5, "Électrik": 0.5, "Sol": 0, "Vol": 2, "Dragon": 0.5 },
+    "Normal": { "Combat": 0.5, "Spectre": 0, "Roche": 0.5 },
+    "Psy": { "Combat": 0.5, "Psy": 0.5, "Insecte": 2, "Spectre": 2, "Ténèbres": 2 },
+    "Spectre": { "Normal": 0, "Psy": 2, "Spectre": 2, "Ténèbres": 0.5 },
+    // Ajoutez d'autres types ici
 };
 
 function calculateDamage(attacker, defender, attack) {
@@ -104,9 +118,18 @@ function calculateDamage(attacker, defender, attack) {
     const defenseStat = attack.isSpecial ? defender.specialDefense : defender.defense;
     const power = attack.power;
 
+    const isCritical = Math.random() < 0.0625; // 6.25% de chance de coup critique
+    const criticalModifier = isCritical ? 1.5 : 1;
+
     const baseDamage = ((2 * level + 10) / 250) * (attackStat / defenseStat) * power + 2;
-    const modifier = calculateModifier(attacker, defender, attack);
-    return Math.floor(baseDamage * modifier);
+    const modifier = calculateModifier(attacker, defender, attack) * criticalModifier;
+    const damage = Math.floor(baseDamage * modifier);
+
+    if (isCritical) {
+        log("Coup critique !");
+    }
+
+    return damage;
 }
 
 function calculateModifier(attacker, defender, attack) {
@@ -126,6 +149,13 @@ function useAttack(attacker, defender, attack) {
         const damage = calculateDamage(attacker, defender, attack);
         defender.hp = Math.max(0, defender.hp - damage);
         log(`${attacker.name} a utilisé ${attack.name} !`);
+
+        // Effets spéciaux des attaques
+        if (attack.name === "Rugissement") {
+            defender.attack = Math.max(0, defender.attack - 1);
+            log(`${defender.name} a perdu un point d'Attaque !`);
+        }
+
         updateStats();
         if (defender.hp <= 0) {
             endBattle(attacker);
@@ -164,8 +194,27 @@ function updateStats() {
     document.getElementById("opponent-hp").textContent = opponent.hp;
     document.getElementById("player-pp").textContent = player.attacks.map(a => a.pp).join("/");
     document.getElementById("opponent-pp").textContent = opponent.attacks.map(a => a.pp).join("/");
+
+    // Mettre à jour les images des Pokémon
     document.getElementById("player-image").src = player.image;
     document.getElementById("opponent-image").src = opponent.image;
+
+    // Mettre à jour les jauges de vie
+    updateHealthBar("player-health-bar", player.hp, 100); // 100 est le PV max
+    updateHealthBar("opponent-health-bar", opponent.hp, 100); // 100 est le PV max
+}
+
+function updateHealthBar(barId, currentHp, maxHp) {
+    const healthBar = document.getElementById(barId);
+    const percentage = (currentHp / maxHp) * 100;
+    healthBar.style.width = `${percentage}%`;
+
+    // Changer la couleur de la jauge si les PV sont bas
+    if (percentage <= 25) {
+        healthBar.classList.add("low");
+    } else {
+        healthBar.classList.remove("low");
+    }
 }
 
 function endBattle(winner) {
@@ -177,7 +226,7 @@ function startBattle() {
     document.getElementById("selection-screen").style.display = "none";
     document.getElementById("battle-screen").style.display = "block";
     updateStats();
-    updateAttackButtons(); 
+    updateAttackButtons();
 }
 
 function updateAttackButtons() {
@@ -192,6 +241,34 @@ function updateAttackButtons() {
             attackButtons[index].style.opacity = 1;
         }
     });
+}
+
+function openSwitchMenu() {
+    const switchMenu = document.getElementById("switch-menu");
+    switchMenu.innerHTML = "";
+    playerTeam.forEach(pokemon => {
+        if (pokemon.hp > 0 && pokemon.name !== player.name) {
+            const button = document.createElement("button");
+            button.textContent = pokemon.name;
+            button.addEventListener("click", () => {
+                switchPokemon(pokemon);
+                switchMenu.style.display = "none";
+            });
+            switchMenu.appendChild(button);
+        }
+    });
+    switchMenu.style.display = "block";
+}
+
+function switchPokemon(newPokemon) {
+    if (player.hp > 0) {
+        player = newPokemon;
+        log(`Vous avez envoyé ${newPokemon.name} !`);
+        updateStats();
+        updateAttackButtons();
+    } else {
+        log("Vous ne pouvez pas changer de Pokémon !");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -222,6 +299,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
+    document.getElementById("switch-button").addEventListener("click", openSwitchMenu);
     document.getElementById("end-battle").addEventListener("click", () => location.reload());
 });
 
