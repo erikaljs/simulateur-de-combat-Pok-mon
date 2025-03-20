@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Combat Pokémon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="selection-screen" class="container">
+        <h1>Choisissez votre Pokémon</h1>
+        <div id="pokemon-selection" class="pokemon-selection"></div>
+    </div>
+    <div id="battle-screen" class="container" style="display: none;">
+        <h1>Simulateur de Combat Pokémon</h1>
+        <div class="pokemon">
+            <img id="player-image" src="" alt="Player Pokémon">
+            <div class="stats">
+                <p>PV: <span id="player-hp"></span></p>
+                <p>PP: <span id="player-pp"></span></p>
+            </div>
+        </div>
+        <div class="pokemon">
+            <img id="opponent-image" src="" alt="Opponent Pokémon">
+            <div class="stats">
+                <p>PV: <span id="opponent-hp"></span></p>
+                <p>PP: <span id="opponent-pp"></span></p>
+            </div>
+        </div>
+        <div class="attacks">
+            <button>Attaque 1</button>
+            <button>Attaque 2</button>
+            <button>Attaque 3</button>
+            <button>Attaque 4</button>
+        </div>
+        <div class="battle-log" id="log"></div>
+        <button id="end-battle">Terminer le combat</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
